@@ -1,5 +1,14 @@
 import mahasiswa from "../Database/MhsModels.js";
 
+// Reusable  function
+export const findNpm = async (npm) => {
+  return await mahasiswa.findOne({
+    where: {
+      npm: npm,
+    },
+  });
+};
+
 // Menampilkan seluruh data mahasiswa
 export const getAllMhs = async (req, res) => {
   try {
@@ -13,11 +22,7 @@ export const getAllMhs = async (req, res) => {
 // Menampilkan data mahasiswa secara spesifik
 export const findOneMhs = async (req, res) => {
   try {
-    const mhs = await mahasiswa.findOne({
-      where: {
-        npm: req.params.npm,
-      },
-    });
+    const mhs = await findNpm(req.params.npm);
 
     if (!mhs) {
       res.json({ message: "Data tidak ditemukan" });
@@ -35,13 +40,10 @@ export const findOneMhs = async (req, res) => {
 // Menambahkan data mahasiswa
 export const createMhs = async (req, res) => {
   try {
-    await mahasiswa.create(req.body);
-
-    // if (req.body.npm === mahasiswa.findOne({ where: { npm: req.body.npm } })) {
-    //   res.json({
-    //     message: "NPM sudah terdaftar",
-    //   });
-    // }
+    // check npm
+    const findByNpm = (await findNpm(req.body.npm))
+      ? res.json({ msg: "NPM sudah terdaftar" })
+      : await mahasiswa.create(req.body);
 
     res.json({
       data: req.body,
@@ -55,11 +57,17 @@ export const createMhs = async (req, res) => {
 // Mengubah data mahasiswa
 export const updateMhs = async (req, res) => {
   try {
+    const mhs = await findNpm(req.params.npm);
+    if (!mhs) {
+      res.json({ message: "Data tidak ditemukan" });
+    }
+
     await mahasiswa.update(req.body, {
       where: {
-        npm: req.params.npm,
+        npm: parseInt(req.params.npm),
       },
     });
+
     res.json({
       data: req.body,
       message: "Data Mahasiswa Berhasilasil Diubah",
