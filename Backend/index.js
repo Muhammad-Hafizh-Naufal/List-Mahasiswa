@@ -1,9 +1,11 @@
 import express from "express";
+import cors from "cors";
 import MhsRoutes from "./Source/MhsRoutes.js";
 
 const app = express();
 const PORT = 3000;
 
+app.use(cors());
 app.use(express.json(await MhsRoutes)); // Middleware untuk menggunaan JSON
 app.use(MhsRoutes);
 
