@@ -1,24 +1,36 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function InputForm() {
+  // State untuk menyimpan input dari form
   const [npm, setNpm] = useState("");
   const [name, setName] = useState("");
   const [kelas, setKelas] = useState("");
+  const navigate = useNavigate(); // Hook untuk navigasi setelah form disubmit
 
+  // Fungsi untuk mengirim data mahasiswa baru ke backend
   const saveMhs = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Mencegah refresh halaman ketika form disubmit
     try {
       await axios.post("http://localhost:3000/api/mahasiswa", {
-        npm,
-        name,
-        kelas,
+        npm, // NPM dari state
+        name, // Nama dari state
+        kelas, // Kelas dari state
       });
+
+      // Membersihkan input form setelah data berhasil disimpan
       setNpm("");
       setName("");
       setKelas("");
+
+      // Menampilkan notifikasi sukses
       alert("Data Mahasiswa Berhasilasil Ditambahkan");
+
+      // Mengarahkan kembali ke halaman utama
+      navigate("/");
     } catch (error) {
+      // Menangani jika terjadi kesalahan
       console.log(error);
       alert("Data Mahasiswa Gagal Ditambahkan");
     }

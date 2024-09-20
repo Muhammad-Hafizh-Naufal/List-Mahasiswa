@@ -1,22 +1,30 @@
-import { useEffect, useState } from "react";
-import Table from "../components/Fragments/Table";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import Table from "../components/Fragments/Table";
 
-export default function listMhs() {
-  const [Mahasiswa, setMahasiswa] = useState([]);
+export default function List() {
+  const [data, setData] = useState([]); // Deklarasi state untuk menampung data mahasiswa
 
+  // Mengambil data mahasiswa saat komponenen dimuat pertama kali
   useEffect(() => {
-    getMahasiswa();
+    getMhs();
   }, []);
 
-  const getMahasiswa = async () => {
-    const response = await axios.get("http://localhost:3000/api/mahasiswa");
-    setMahasiswa(response.data);
+  // Fungsi untuk mengambil data mahasiswa dari API
+  const getMhs = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/mahasiswa");
+      setData(response.data); // Set data mahasiswa setelah fetch berhasil
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   return (
     <>
-      <Table data={Mahasiswa} />
+      <div className="container mx-auto my-10">
+        <Table data={data} setData={setData} />{" "}
+      </div>
     </>
   );
 }
